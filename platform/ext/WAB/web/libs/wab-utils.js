@@ -16,14 +16,14 @@ WAB.MIDIHandler = function ()
         navigator.requestMIDIAccess().then((access) => {
           midiAccess = access;
           resolve(access);
-        }, () => { reject(); });
+        }, () => { resolve(null); });
       }
-      else reject();
+      else resolve(null);
     });
   }
 
   Object.defineProperties(this, {
-    inputs: { get: () => { return midiAccess.inputs; }}
+    inputs: { get: () => { return midiAccess.inputs || []; }}
   })
 }
 

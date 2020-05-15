@@ -2,8 +2,9 @@
 // interfaces both osc and effect instances
 // Jari Kleimola 2019 (jari@webaudiomodules.org)
 
-import WAB from "../libs/wab-processor.js"
+// import WAB from "../libs/wab-processor.js"
 var KORG = KORG || {}
+var WAB = WAB || AudioWorkletGlobalScope.WAB;
 
 KORG.LogueProcessor = class LogueProcessor extends WAB.WasmProcessor
 {

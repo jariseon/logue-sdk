@@ -2,7 +2,8 @@
 // Jari Kleimola 2019 (jari@webaudiomodules.org)
 
 var WAB = WAB || {}
-export default WAB;
+// export default WAB;
+AudioWorkletGlobalScope.WAB = WAB;
 
 WAB.WasmProcessor = class WAB_WasmProcessor extends AudioWorkletProcessor
 {
@@ -44,6 +45,7 @@ WAB.WasmProcessor = class WAB_WasmProcessor extends AudioWorkletProcessor
   // -- web audio api calls this method periodically
   //
   process (inputs, outputs, params) {
+    if (!this.wab) return;
     let bus = this.audiobus;
     bus.push(inputs);
     this.wab.process(bus.inbufs, bus.outbufs, null);

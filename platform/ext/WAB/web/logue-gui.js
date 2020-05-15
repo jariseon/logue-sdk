@@ -21,25 +21,34 @@ var LogueGUI = function (synth)
         oscDefs.forEach((o) => {
             if (prevman != o.man) {
                 prevman = o.man;
-                combo.appendChild(new Option("---------------"));
-                combo.lastElementChild.disabled = true;
+                // combo.appendChild(new Option("---------------"));
+                // combo.lastElementChild.disabled = true;
             }
             combo.appendChild(new Option(o.label, o.type));
         });
+        combo.selectedIndex = oscDefs.findIndex(d => { return d.type == oscDefs.defaultType; });
 
-        // -- midi input ports
-        combo = document.getElementById("midiIn");
-        synth.midiHandler.inputs.forEach((input) => {
-            let option = new Option(input.name);
-            option.port = input;
-            combo.appendChild(option);
-        });
-        combo.onchange = e => {
-            let inport = e.target.options[e.target.selectedIndex].port;
-            inport.onmidimessage = (e) => { synth.onmidi(e.data); }
+        if (navigator.requestMIDIAccess) {
+          // -- midi input ports
+          combo = document.getElementById("midiIn");
+          synth.midiHandler.inputs.forEach((input) => {
+              let option = new Option(input.name);
+              option.port = input;
+              combo.appendChild(option);
+          });
+          combo.onchange = e => {
+              let inport = e.target.options[e.target.selectedIndex].port;
+              inport.onmidimessage = (e) => { synth.onmidi(e.data); }
+          }
+          if (combo.options.length > 0)
+              combo.onchange({ target:combo });
+          combo.className = "chromium";
+          document.querySelector("#osc").className = "chromium";
         }
-        if (combo.options.length > 0)
-            combo.onchange({ target:combo });
+
+        else {
+          document.querySelector(".midi").style.display = "none";
+        }
 
         // -- shape and param knobs
         let knobs = document.querySelectorAll("wab-svgknob");
