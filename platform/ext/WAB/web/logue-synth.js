@@ -5,11 +5,28 @@ var KORG = KORG || {}
 
 var oscDefs = [
     // -- KORG
-    { label:"KORG waves",   man:"KORG", type:"waves",   code:"waves.js" },
+  { label:"KORG fm",      man:"KORG", type:"fm",      code:"fm.js" },
+  { label:"KORG waves",   man:"KORG", type:"waves",   code:"waves.js" },
 
+  // -- Mutable Instruments
+  { label:"PLAITS add", man:"MI", type:"MO2_ADD", code:"plaits-add.js" },
+  { label:"PLAITS fm",  man:"MI", type:"MO2_FM",  code:"plaits-fm.js"  },
+  { label:"PLAITS grn", man:"MI", type:"MO2_GRN", code:"plaits-grn.js" },
+  { label:"PLAITS wsh", man:"MI", type:"MO2_WSH", code:"plaits-wsh.js" },
+  { label:"PLAITS va",  man:"MI", type:"MO2_VA",  code:"plaits-va.js"  },
+  { label:"PLAITS wta", man:"MI", type:"MO2_WTA", code:"plaits-wta.js" },
+  { label:"PLAITS wtb", man:"MI", type:"MO2_WTB", code:"plaits-wtb.js" },
+  { label:"PLAITS wtc", man:"MI", type:"MO2_WTC", code:"plaits-wtc.js" },
+  { label:"PLAITS wtd", man:"MI", type:"MO2_WTD", code:"plaits-wtd.js" },
+  { label:"PLAITS wte", man:"MI", type:"MO2_WTE", code:"plaits-wte.js" },
+  { label:"PLAITS wtf", man:"MI", type:"MO2_WTF", code:"plaits-wtf.js" },
+
+  // -- Jari
+  { label:"JARI vps", man:"JARI", type:"vps", code:"vps.js" },
 ];
+
 oscDefs.url = "oscs/";
-oscDefs.defaultType = "waves"
+oscDefs.defaultType = "fm"
 
 KORG.LogueSynth = class LogueSynth extends WAB.MonoSynth
 {
@@ -22,17 +39,19 @@ KORG.LogueSynth = class LogueSynth extends WAB.MonoSynth
         // -- processor part lives in AudioWorklet's audio thread
         // -- the line below loads its script into AudioWorkletGlobalScope
         // -- instantiated in setOscType
+        await actx.audioWorklet.addModule("libs/wab-processor.js");
         await actx.audioWorklet.addModule("oscs/logue-proc.js");
 
         let type = window.location.hash ? window.location.hash.substring(1) : oscDefs.defaultType;
         await this.setOscType(type);
-        this.pitch = 64;
+        this.pitch = 60;
         this.gate  = 1;
     }
 
     // -- oscillator hotswap
     //
     async setOscType (type) {
+        this.lfoAmount = 0;
         for (let i = 0; i < oscDefs.length; i++) {
             if (oscDefs[i].type == type) {
 

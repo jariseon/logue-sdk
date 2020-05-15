@@ -30,7 +30,10 @@
 
 <body onload="main()">
   <h1>logue-sdk web simulator</h1>
-  <h2>user oscillator test page</h2>
+  <div class="subtitle">
+    <h2>monophonic user oscillator test/demo widget</h2>
+    <a href="https://github.com/jariseon/logue-sdk/tree/wasm-demos" target="_blank">github</a>
+  </div>
   <div id="container">
 
     <div>
@@ -38,7 +41,7 @@
         <label id="oscreload" onclick="synth.reload('osc')">OSCILLATOR</label><select id="osc" onchange="synth.setOscType(this.value)"></select>
         <div class="toggle active" id="hold">HOLD</div>
         <label>OUT LEVEL</label><input type="range" min="0" max="100" value="20" oninput="synth.masterGain = this.value/100">
-        <div class="right"><label>MIDI</label><select id="midiIn" onchange="onmidi(this.value)"></select></div>
+        <div class="right midi"><label>MIDI</label><select id="midiIn" onchange="onmidi(this.value)"></select></div>
       </div>
 
       <div id="frontpanel">
@@ -74,8 +77,18 @@
   </div>
 
   <div id="bottomline">
-    <div>requires Chrome/Opera/Vivaldi</div>
-    <div class="credit">logue-sdk commit da587f5 (KORG), wab port (Jari)</div>
+    <div>requires chromium-based browser</div>
+    <div class="credit">logue-sdk (KORG), wasm stuff (jari)</div>
+  </div>
+
+  <div id="info">
+    hold down shift key for alt shape and lfo rate control
+    <div style="margin-top:15px;">oscillators</div>
+    <ul>
+      <li><div>KORG</div>sdk oscs</li>
+      <li><div>PLAITS</div>Mutable Instruments&nbsp;<a href="https://github.com/peterall/eurorack-prologue" target="_blank">macro-oscillator</a></li>
+      <li><div>JARI</div>extended&nbsp;<a href="https://www.dafx.de/paper-archive/details.php?id=pnPMKb4L_ZBFzl-725e6QQ" target="_blank">vps</a>&nbsp;oscillator</li>
+    </ul>
   </div>
 </body>
 </html>
