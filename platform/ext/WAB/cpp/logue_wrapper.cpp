@@ -18,7 +18,7 @@ namespace KORG {
   const int k_logue_pitch     = k_logue_property + 1;
   const int k_logue_cutoff    = k_logue_property + 2;
   const int k_logue_resonance = k_logue_property + 3;
-  
+
   // ----------------------------------------------------------------------------
   // LogueProcessor : abstract superclass for LogueOscillator/Effect
   // ----------------------------------------------------------------------------
@@ -46,7 +46,7 @@ namespace KORG {
     (void)data;
     (void)byteLength;
   }
-  
+
   // ----------------------------------------------------------------------------
   // LogueOscillator
   // ----------------------------------------------------------------------------
@@ -92,8 +92,11 @@ namespace KORG {
     // our LFO runs actually at audiorate, but here we just take the first sample
     // now unipolar
     const float* lfobuf = getBuffer(inputs, 0);
-    float lfo = lfobuf[0];
-    m_params.shape_lfo = lfo ? f32_to_q31(0.5 * lfo + 0.5) : 0;
+    if (lfobuf) {
+      float lfo = lfobuf[0];
+      m_params.shape_lfo = lfo ? f32_to_q31(0.5 * lfo + 0.5) : 0;
+    }
+    else m_params.shape_lfo = 0;
 
     // render in user oscillator and scale the result back to 32bit floats
     float* out = getBuffer(outputs, 0);
