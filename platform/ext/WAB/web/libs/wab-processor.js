@@ -12,6 +12,7 @@ WAB.WasmProcessor = class WAB_WasmProcessor extends AudioWorkletProcessor
     this.audiobus = new WAB.HeapAudioBus(options);
     this.descriptor = options.processorOptions.descriptor || "";
 		this.port.onmessage = this.onmessage.bind(this);
+    this.ready = false;
   }
 
   // -- messages from main thread appear here
@@ -27,16 +28,18 @@ WAB.WasmProcessor = class WAB_WasmProcessor extends AudioWorkletProcessor
         break;
       case "create":
         var WABModule = { ENVIRONMENT:"WEB" };
+        this.ready = false;
         WABModule.onRuntimeInitialized = () => {
-          this.wab = this.module.getInstance(msg.prop);
+          this.wab = WABModule.getInstance(msg.prop);
           if (this.wab.init(128, sampleRate, this.descriptor)) {
-            this.module.port = this.port;
-            this.audiobus.init(this.module);
+            WABModule.port = this.port;
+            this.audiobus.init(WABModule);
             this.port.postMessage({ type:"response", data:"ready" });
+            this.module = WABModule;
+            this.ready = true;
           }
           else this.port.postMessage({ type:"response", data:"error" });
         }
-        this.module = WABModule;
         eval(msg.data);
         break;
     }
@@ -45,7 +48,7 @@ WAB.WasmProcessor = class WAB_WasmProcessor extends AudioWorkletProcessor
   // -- web audio api calls this method periodically
   //
   process (inputs, outputs, params) {
-    if (!this.wab) return;
+    if (!this.ready) return true;
     let bus = this.audiobus;
     bus.push(inputs);
     this.wab.process(bus.inbufs, bus.outbufs, null);
@@ -100,8 +103,9 @@ WAB.HeapAudioBus = function (options)
     let j = 0;
     for (let i = 0; i < ninputs; i++) {
       let numChannels = ninChannels[i];
-      for (let c = 0; c < numChannels; c++)
-        module.HEAPF32.set(inputs[i][c], this.inbufs[j++] >> 2);
+      if (inputs[i].length)
+        for (let c = 0; c < numChannels; c++)
+          module.HEAPF32.set(inputs[i][c], this.inbufs[j++] >> 2);
     }
   }
 
