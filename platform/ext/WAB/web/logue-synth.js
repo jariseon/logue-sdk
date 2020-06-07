@@ -1,10 +1,10 @@
 // KORG prologue / minilogue_xd user osc/fx container
-// Jari Kleimola 2019 (jari@webaudiomodules.org)
+// Jari Kleimola 2019-20 (jari@webaudiomodules.org)
 
 var KORG = KORG || {}
 
 var oscDefs = [
-    // -- KORG
+  // -- KORG
   { label:"KORG fm",      man:"KORG", type:"fm",      code:"fm.js" },
   { label:"KORG waves",   man:"KORG", type:"waves",   code:"waves.js" },
 
@@ -26,15 +26,21 @@ var oscDefs = [
 ];
 
 oscDefs.url = "oscs/";
-oscDefs.defaultType = "fm"
 
 KORG.LogueSynth = class LogueSynth extends WAB.MonoSynth
 {
-    async init () {
+    async init (options) {
         await super.init();
 
+        options.overlay = options.overlay === undefined ? true : options.overlay;
+        options.hold = options.hold === undefined ? true : options.hold;
+        options.pitch = options.pitch === undefined ? 60 : options.pitch;
+        options.freqRange = options.freqRange === undefined ? 5 : options.freqRange;
+        options.outLevel = options.outLevel === undefined ? 0.2 : options.outLevel;
+        options.oscillator = options.oscillator === undefined ? "fm" : options.oscillator;
+
         this.gui = new LogueGUI(this);
-        await this.gui.init();
+        await this.gui.init(options);
 
         // -- processor part lives in AudioWorklet's audio thread
         // -- the line below loads its script into AudioWorkletGlobalScope
@@ -42,10 +48,12 @@ KORG.LogueSynth = class LogueSynth extends WAB.MonoSynth
         await actx.audioWorklet.addModule("libs/wab-processor.js");
         await actx.audioWorklet.addModule("oscs/logue-proc.js");
 
-        let type = window.location.hash ? window.location.hash.substring(1) : oscDefs.defaultType;
+        let type = window.location.hash ? window.location.hash.substring(1) : options.oscillator;
         await this.setOscType(type);
-        this.pitch = 60;
-        this.gate  = 1;
+        this.hold  = options.hold;
+        this.pitch = options.pitch;
+        this.gate  = options.hold ? 1 : 0;
+        this.masterGain = Math.max(0, Math.min(options.outLevel,1));
     }
 
     // -- oscillator hotswap

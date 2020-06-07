@@ -12,7 +12,7 @@ h2 { font-weight:100; margin:0 0 20px 0; font-size:14px; }
 #oscreload:hover { color:lightskyblue; }
 label { font-size:12px; margin:1px 5px 0 2px; }
 select, #keys li { cursor:pointer; }
-select.chromium { background:#1a1a1a; color:#eee; border:1px solid #888; }
+select.chromium { background:#1a1a1a; color:#ccc; border:1px solid #777; border-radius:3px; font-size:12px; margin-top:2px; }
 input { cursor:pointer; }
 #osc { margin-right:10px; }
 #topbar div.right { position:absolute; right:10px; }

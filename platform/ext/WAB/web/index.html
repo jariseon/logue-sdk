@@ -10,7 +10,6 @@
   <script src="libs/wab-spect.js"></script>
   <script src="libs/wab-keys.js"></script>
   <script src="libs/wab-utils.js"></script>
-  <script src="libs/jszip.min.js"></script>
 
   <!-- logue -->
   <script src="logue-synth.js"></script>
@@ -19,12 +18,21 @@
   <link rel="stylesheet" href="logue.css">
 </head>
 <script>
-	var actx,synth;
+	let actx,synth;
+
+  let options = {
+    overlay: true,      // show overlay prompt at startup (used to resolve autoplay policy)
+    hold: true,         // ignore note offs
+    pitch: 60,          // default pitch (midi note number)
+    freqRange: 5,       // default freq range for spectrum display (5,10,15,20)
+    outLevel: 0.2,      // default output level (0..1)
+    oscillator: "fm"    // default oscillator (descriptor.type)
+  }
 
   function main () {
     actx  = new AudioContext();
     synth = new KORG.LogueSynth();
-    synth.init();
+    synth.init(options);
   }
 </script>
 
@@ -40,7 +48,7 @@
       <div id="topbar">
         <label id="oscreload" onclick="synth.reload('osc')">OSCILLATOR</label><select id="osc" onchange="synth.setOscType(this.value)"></select>
         <div class="toggle active" id="hold">HOLD</div>
-        <label>OUT LEVEL</label><input type="range" min="0" max="100" value="20" oninput="synth.masterGain = this.value/100">
+        <label>OUT LEVEL</label><input type="range" id="outLevel" min="0" max="100" value="20" oninput="synth.masterGain = this.value/100">
         <div class="right midi"><label>MIDI</label><select id="midiIn" onchange="onmidi(this.value)"></select></div>
       </div>
 
@@ -77,7 +85,7 @@
   </div>
 
   <div id="bottomline">
-    <div>requires chromium-based browser</div>
+    <div>requires chromium-based or firefox browser</div>
     <div class="credit">logue-sdk (KORG), wasm stuff (jari)</div>
   </div>
 

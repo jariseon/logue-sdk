@@ -14,22 +14,22 @@ var LogueGUI = function (synth)
 
     // -- init widgets
     //
-    this.init = async () => {
+    this.init = async (options) => {
         // -- oscillator combo
         let combo = document.getElementById("osc");
         let prevman = oscDefs[0].man;
         oscDefs.forEach((o) => {
-            if (prevman != o.man) {
+            if (prevman != o.man)
                 prevman = o.man;
-                // combo.appendChild(new Option("---------------"));
-                // combo.lastElementChild.disabled = true;
-            }
             combo.appendChild(new Option(o.label, o.type));
         });
-        combo.selectedIndex = oscDefs.findIndex(d => { return d.type == oscDefs.defaultType; });
+        combo.selectedIndex = oscDefs.findIndex(d => { return d.type == options.oscillator; });
 
+        // -- out level slider
+        document.querySelector("#outLevel").value = options.outLevel * 100;
+
+        // -- midi input ports
         if (navigator.requestMIDIAccess) {
-          // -- midi input ports
           combo = document.getElementById("midiIn");
           synth.midiHandler.inputs.forEach((input) => {
               let option = new Option(input.name);
@@ -64,7 +64,9 @@ var LogueGUI = function (synth)
         Array.from(toggles).forEach((toggle) => {
             toggle.onclick = (toggle.id == "hold") ? onhold : onrange;
         });
-        holdon = true;
+        holdon = options.hold;
+        if (holdon) document.querySelector("#hold").classList.add("active");
+        else document.querySelector("#hold").classList.remove("active");
 
         // -- shift key
         document.body.onkeydown = (e) => {
@@ -78,6 +80,9 @@ var LogueGUI = function (synth)
         scope = new Oscilloscope("scope", actx, 4096);
         spect = new SpectrumAnalyzer("spect", actx, 0,5000, -100,-6, 32768 >> 1);
 
+        let freqRange = Math.max(0, Math.min(options.freqRange/5, 4));
+        onrange({ target:toggles[freqRange] });
+
         // -- midi keyboard
         let midikeys = new QwertyHancock({
             container: document.querySelector("#keys"), height: 70,
@@ -89,12 +94,15 @@ var LogueGUI = function (synth)
 
         // -- overlay
         let overlay = document.querySelector("#overlay");
-        overlay.onclick = () => {
-            actx.resume();
-            synth.masterGain = 0.2;
-            overlay.classList.add("fadeout");
-            setTimeout(() => { overlay.style.display = "none"; }, 1000);
+        if (options.overlay) {
+          overlay.onclick = () => {
+              actx.resume();
+              synth.masterGain = options.outLevel;
+              overlay.classList.add("fadeout");
+              setTimeout(() => { overlay.style.display = "none"; }, 1000);
+          }
         }
+        else overlay.style.display = "none";
 
         setTimeout(() => { plot(); }, 100);
     }
