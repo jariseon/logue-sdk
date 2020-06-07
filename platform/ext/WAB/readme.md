@@ -31,7 +31,7 @@ To debug, start the second localhost server and follow the steps listed in **run
 
 optional: to enable autoplay click on the circled i icon in chrome's address field (see screenshot), and choose *Site Settings* from the menu that appears. Then set *Audio* option to *Allow*.
 
-![Image of debugging session](https://github.com/jariseon/logue-sdk/tree/wasm-demos/platform/ext/WAB/logue-debugging.png)
+![Image of debugging session](./logue-debugging.png)
 
 ## adaptation
 The most straight-forward way to start developing wasm-enabled logue oscillators is to simply continue building on top of what is in the workflow example folder. However, if you already have a project folder, the list below goes through the required customization steps.
