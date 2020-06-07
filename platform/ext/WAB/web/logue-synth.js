@@ -4,6 +4,9 @@
 var KORG = KORG || {}
 
 var oscDefs = [
+  // -- WASM example
+  { label:"WASM pd", man:"test", type:"pd", code:"pd.js" },
+
   // -- KORG
   { label:"KORG fm",      man:"KORG", type:"fm",      code:"fm.js" },
   { label:"KORG waves",   man:"KORG", type:"waves",   code:"waves.js" },
